@@ -3,7 +3,7 @@ name: Docker Build, Push & Run Test
 on:
   push:
     branches:
-      - main  # or your default branch
+      - main
 
 jobs:
   build-push-run:
@@ -16,7 +16,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: pradiphivare
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker image
@@ -33,7 +33,7 @@ jobs:
 
       - name: Wait for app to be ready
         run: |
-          sleep 10  # wait 10 seconds for server startup
+          sleep 10
 
       - name: Test app response
         run: |
