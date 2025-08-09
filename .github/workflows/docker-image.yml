@@ -1,0 +1,45 @@
+name: Docker Build, Push & Run Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-push-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: pradiphivare
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t pradiphivare/simple-web-app:latest .
+
+      - name: Push Docker image
+        run: |
+          docker push pradiphivare/simple-web-app:latest
+
+      - name: Run container in detached mode
+        run: |
+          docker run -d -p 3000:3000 --name test-simple-web-app pradiphivare/simple-web-app:latest
+
+      - name: Wait for app to be ready
+        run: |
+          sleep 10
+
+      - name: Test app response
+        run: |
+          curl --fail http://localhost:3000 || exit 1
+
+      - name: Stop container
+        run: |
+          docker stop test-simple-web-app
+          docker rm test-simple-web-app
